@@ -6,7 +6,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     .sidebar {
         width: 250px;
         height: 100vh;
-        background-color: #0d6efd;
+        background: linear-gradient(135deg, #0052D4, #4364F7);
         position: fixed;
         top: 0;
         left: -250px;
@@ -72,7 +72,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 </style>
 
 <!-- Tombol Menu -->
-<button class="btn border-0 bg-transparent" id="menu-toggle" onclick="toggleSidebar()" style="position: fixed; top: 15px; left: 50px; z-index: 1100;">
+<button class="btn btn-outline-light btn-lg mb-3 btn-press" id="menu-toggle" onclick="toggleSidebar()" style="position: fixed; top: 15px; left: 50px; z-index: 1100;">
     <span style="font-size: 24px;">&#9776;</span>
 </button>
 

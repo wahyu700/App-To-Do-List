@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $check_result = $check_stmt->get_result();
 
     if ($check_result->num_rows > 0) {
-        $error = "Username sudah digunakan. Silakan pilih username lain.";
+        $error = "Username sudah digunakan..";
     } else {
         // Hash password
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -51,18 +51,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     body, .card, .form-control, .btn {
         font-family: 'Times New Roman', Times, serif;
     }
+
+    body {
+        background: linear-gradient(135deg,rgb(6, 32, 151), rgb(51, 127, 250));
+
+    }
 </style>
 
 </head>
-<body class="bg-primary d-flex align-items-center justify-content-center vh-100">
-    <div class="card shadow p-4" style="min-width: 350px;">
+<body class="bg-white d-flex align-items-center justify-content-center vh-100">
+    <div class="card shadow p-4 text-white" style="background: linear-gradient(135deg,rgb(51, 127, 250),rgb(6, 32, 151)); border-radius: 20px; min-width: 350px;">
         <h3 class="text-center mb-3">Register</h3>
 
         <?php if (isset($error)): ?>
             <div class="alert alert-danger"><?= $error ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="">
+        <form id="registerForm" method="POST" action="">
             <div class="mb-3">
                 <label for="username" class="form-label">Username:</label>
                 <input type="text" name="username" class="form-control" required>
@@ -75,18 +80,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="mb-3">
                 <label for="password" class="form-label">Password:</label>
-                <input type="password" name="password" class="form-control" required>
+                <input type="password" name="password" id="password" class="form-control" required>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">Register</button>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Konfirmasi Password:</label>
+                <input type="password" name="confirm_password" id="confirmPassword" class="form-control" required>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="showPassword" onclick="togglePassword()" style="cursor: pointer;">
+                <label class="form-check-label" for="showPassword" style="cursor: pointer;">
+                    Tampilkan Password
+                </label>
+            </div>
+
+            <button type="submit" class="btn w-100" style="background-color: black; color: white;">Register</button>
         </form>
 
         <p class="mt-3 text-center">
-            Sudah punya akun? <a href="login.php">Login di sini</a>.
+            Sudah punya akun? <a href="login.php" class="text-white text-decoration-underline">Login di sini</a>.
         </p>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function togglePassword() {
+        const password = document.getElementById("password");
+        const confirm = document.getElementById("confirmPassword");
+
+        if (password) {
+            password.type = password.type === "password" ? "text" : "password";
+        }
+
+        if (confirm) {
+            confirm.type = confirm.type === "password" ? "text" : "password";
+        }
+    }
+
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert("Konfirmasi Password tidak cocok!");
+        }
+    });
+</script>
+
 </body>
 </html>

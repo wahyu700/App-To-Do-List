@@ -34,7 +34,7 @@ if ($filter === 'selesai') {
     <style>
         body {
             font-family: 'Times New Roman', serif;
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg,rgb(6, 32, 151), rgb(51, 127, 250));
         }
         .card {
             border-radius: 20px;
@@ -46,49 +46,55 @@ if ($filter === 'selesai') {
     </style>
 </head>
 <body>
-
 <?php include '../sidebar.php'; ?>
 
 <div class="container mt-5">
-
-    <!-- Statistik Tugas -->
+    <!-- Statistik tugas dalam bentuk 3 kolom -->
     <div class="row mb-4">
+        <!-- Total tugas -->
         <div class="col-md-4">
             <a href="daftar_tugas.php?filter=semua" class="text-decoration-none">
-                <div class="card p-4 bg-white text-dark text-center">
+                <div class="card p-4 text-white text-center"
+                    style="background: linear-gradient(135deg,rgb(51, 127, 250),rgb(6, 32, 151)); border-radius: 20px;">
                     <h4>Total Tugas</h4>
                     <p class="display-6"><?php echo $totalTasks; ?></p>
                 </div>
             </a>
         </div>
+
+        <!-- Tugas yang sudah selesai -->
         <div class="col-md-4">
             <a href="daftar_tugas.php?filter=selesai" class="text-decoration-none">
-                <div class="card p-4 bg-white text-dark text-center">
+                <div class="card p-4 text-white text-center"
+                    style="background: linear-gradient(135deg,rgb(51, 127, 250),rgb(6, 32, 151)); border-radius: 20px;">
                     <h4>Selesai</h4>
                     <p class="display-6"><?php echo $completedTasks; ?></p>
                 </div>
             </a>
         </div>
+
+        <!-- Tugas yang belum selesai -->
         <div class="col-md-4">
             <a href="daftar_tugas.php?filter=belum" class="text-decoration-none">
-                <div class="card p-4 bg-white text-dark text-center">
+                <div class="card p-4 text-white text-center"
+                    style="background: linear-gradient(135deg,rgb(51, 127, 250),rgb(6, 32, 151)); border-radius: 20px;">
                     <h4>Belum Selesai</h4>
                     <p class="display-6"><?php echo $pendingTasks; ?></p>
                 </div>
             </a>
         </div>
-    </div>
+    </div> <!-- Tutup row -->
 
     <!-- Tabel Daftar Tugas -->
-    <div class="card p-4">
+    <div class="card p-4 mt-5"> <!-- mb-5 biar ada jarak bawah -->
         <h4 class="mb-4">📋 Daftar Tugas - <?= ucfirst($filter) ?></h4>
         <table class="table table-bordered text-center table-striped">
             <thead class="table-primary">
                 <tr>
-                    <th>No</th>
-                    <th>Judul Tugas</th>
-                    <th>Status</th>
-                    <th>Dibuat</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">No</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Judul Tugas</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Status</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Dibuat</th>
                 </tr>
             </thead>
             <tbody>
@@ -103,7 +109,13 @@ if ($filter === 'selesai') {
             </tbody>
         </table>
     </div>
+</div>
 
+</div>
+<div class="container mt-5 pt-5">
+    <a href="dashboard_admin.php" class="btn btn-outline-light btn-lg mb-3 btn-press" style="bg-black">
+        <i class="bi bi-arrow-left-circle"></i> ⬅️
+    </a>
 </div>
 
 </body>

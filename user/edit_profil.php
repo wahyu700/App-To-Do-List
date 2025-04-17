@@ -39,12 +39,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <title>Edit Profil</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, rgb(6, 32, 151), rgb(51, 127, 250));
+            min-height: 100vh; 
+            color: white;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body class="gradient-bg">
 
 <div class="container mt-5">
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header text-white" style="background: linear-gradient(135deg, rgb(51, 127, 250), rgb(6, 32, 151));">
             ✏️ Edit Profil
         </div>
         <div class="card-body">

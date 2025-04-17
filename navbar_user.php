@@ -2,8 +2,12 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <style>
+  body {
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
   .menu-box {
-    background: #ffffff;
+    background: linear-gradient(135deg, rgb(51, 127, 250), rgb(6, 32, 151));
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     border-radius: 8px;
     padding: 15px;
@@ -33,7 +37,7 @@
   }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: linear-gradient(135deg, rgb(51, 127, 250), rgb(6, 32, 151));">
   <div class="container-fluid">
     <a class="navbar-brand fw-bold" href="#">🗂️ To Do List</a>
     <button class="btn btn-outline-light ms-auto" id="menuToggle">☰ Menu</button>

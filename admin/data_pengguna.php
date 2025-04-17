@@ -22,7 +22,7 @@ $result = $conn->query($query);
     <style>
         body {
             font-family: 'Times New Roman', serif;
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg,rgb(6, 32, 151), rgb(51, 127, 250));
         }
         .table th, .table td {
             vertical-align: middle;
@@ -31,7 +31,7 @@ $result = $conn->query($query);
 </head>
 <body class="p-4">
     <div class="container">
-        <h3 class="mb-4">👥 Data Pengguna</h3>
+        <h3 class="mb-4 text-white">👥 Data Pengguna</h3>
 
         <?php if (isset($_SESSION['message'])): ?>
             <div class="alert alert-info"><?= $_SESSION['message']; unset($_SESSION['message']); ?></div>
@@ -40,11 +40,11 @@ $result = $conn->query($query);
         <table class="table table-bordered text-center table-striped">
             <thead class="table-primary">
                 <tr>
-                    <th>No</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Aksi</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">No</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Username</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Email</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Role</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,5 +74,10 @@ $result = $conn->query($query);
             </tbody>
         </table>
     </div>
+    <div class="container mt-5 pt-5">
+    <a href="dashboard_admin.php" class="btn btn-outline-light btn-lg mb-3 btn-press" style="bg-black">
+        <i class="bi bi-arrow-left-circle"></i> ⬅️
+    </a>
+</div>
 </body>
 </html>

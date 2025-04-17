@@ -25,9 +25,9 @@ $inProgressTasks = $conn->query("SELECT COUNT(*) AS total FROM tasks WHERE statu
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: 'Times New Roman', serif;
-            background-color: #f8f9fa;
-        }
+            height: 100%;
+            margin: 0;
+            font-family: 'Times New Roman', Times, serif;        }
         .card {
             border-radius: 20px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -35,9 +35,15 @@ $inProgressTasks = $conn->query("SELECT COUNT(*) AS total FROM tasks WHERE statu
         .card h4 {
             font-weight: bold;
         }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, rgb(6, 32, 151), rgb(51, 127, 250));
+            min-height: 100vh; 
+            color: white;
+        }
     </style>
 </head>
-<body>
+<body class="gradient-bg">
 
 <!-- Sidebar navigation -->
 <?php include '../sidebar.php'; ?>
@@ -48,7 +54,9 @@ $inProgressTasks = $conn->query("SELECT COUNT(*) AS total FROM tasks WHERE statu
     <div class="row mb-4">
         <!-- Total tugas -->
         <div class="col-md-4">
-            <a href="daftar_tugas.php?filter=semua" class="text-decoration-none">                <div class="card p-4 bg-white text-dark text-center">
+            <a href="daftar_tugas.php?filter=semua" class="text-decoration-none">
+                <div class="card p-4 text-white text-center"
+                    style="background: linear-gradient(135deg,rgb(51, 127, 250),rgb(6, 32, 151)); border-radius: 20px;">
                     <h4>Total Tugas</h4>
                     <p class="display-6"><?php echo $totalTasks; ?></p>
                 </div>
@@ -58,7 +66,8 @@ $inProgressTasks = $conn->query("SELECT COUNT(*) AS total FROM tasks WHERE statu
         <!-- Tugas yang sudah selesai -->
         <div class="col-md-4">
             <a href="daftar_tugas.php?filter=selesai" class="text-decoration-none">
-                <div class="card p-4 bg-white text-dark text-center">
+                <div class="card p-4 text-white text-center"
+                    style="background: linear-gradient(135deg,rgb(51, 127, 250),rgb(6, 32, 151)); border-radius: 20px;">
                     <h4>Selesai</h4>
                     <p class="display-6"><?php echo $completedTasks; ?></p>
                 </div>
@@ -68,7 +77,8 @@ $inProgressTasks = $conn->query("SELECT COUNT(*) AS total FROM tasks WHERE statu
         <!-- Tugas yang belum selesai -->
         <div class="col-md-4">
             <a href="daftar_tugas.php?filter=belum" class="text-decoration-none">
-                <div class="card p-4 bg-white text-dark text-center">
+                <div class="card p-4 text-white text-center"
+                    style="background: linear-gradient(135deg,rgb(51, 127, 250),rgb(6, 32, 151)); border-radius: 20px;">
                     <h4>Belum Selesai</h4>
                     <p class="display-6"><?php echo $pendingTasks; ?></p>
                 </div>
@@ -77,16 +87,16 @@ $inProgressTasks = $conn->query("SELECT COUNT(*) AS total FROM tasks WHERE statu
 
     <!-- Tugas yang Sedang Dikerjakan -->
     <div class="mt-5">
-        <h4 class="mb-3">
+        <h4 class="mb-3 text-white">
             🛠️ Tugas yang Sedang Dikerjakan
         </h4>
         <div class="table-responsive">
             <table class="table table-bordered bg-white text-center">
-                <thead class="table-light">
+                 <thead class="table-light">
                     <tr>
-                        <th>Judul</th>
-                        <th>Status</th>
-                        <th>Dibuat</th>
+                        <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Judul</th>
+                        <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Status</th>
+                        <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Dibuat</th>
                     </tr>
                 </thead>
                 <tbody>

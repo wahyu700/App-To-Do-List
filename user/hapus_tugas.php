@@ -11,10 +11,12 @@ $user_id = $_SESSION['user_id'];
 $id = $_GET['id'] ?? null;
 
 if ($id) {
-    // Hapus hanya jika tugas milik user
-    $stmt = $conn->prepare("DELETE FROM tasks WHERE id = ? AND user_id = ?");
-    $stmt->bind_param("ii", $id, $user_id);
-    $stmt->execute();
+// Ganti query SELECT
+$stmt = $conn->prepare("
+    SELECT t.* FROM tasks t 
+    JOIN tasks_assignments ta ON t.id = ta.task_id 
+    WHERE t.id = ? AND ta.user_id = ?");
+
 }
 
 header("Location: tugas_saya.php");

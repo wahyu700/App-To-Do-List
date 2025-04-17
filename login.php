@@ -58,19 +58,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Login</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-    body, .card, .form-control, .btn {
-        font-family: 'Times New Roman', Times, serif;
-    }
-</style>
+        body, .card, .form-control, .btn {
+            font-family: 'Times New Roman', Times, serif;
+        }
 
+        body {
+            background: linear-gradient(135deg,rgb(6, 32, 151), rgb(51, 127, 250));
+        }
+    </style>
 </head>
-<body class="bg-primary d-flex align-items-center justify-content-center vh-100">
+<body class="bg-white d-flex align-items-center justify-content-center vh-100">
 
-    <div class="card shadow p-4" style="min-width: 350px;">
+    <div class="card shadow p-4 text-white" style="background: linear-gradient(135deg,rgb(51, 127, 250),rgb(6, 32, 151)); border-radius: 20px; min-width: 350px;">
         <h3 class="text-center mb-3">Login</h3>
 
-        <?php if (isset($_SESSION['login_error'])): ?>
+        <?php
+        session_start();
+        if (isset($_SESSION['login_error'])): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorAlert">
                 <?= $_SESSION['login_error'] ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -86,14 +93,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             <div class="mb-3">
                 <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" required>
+                <input type="password" name="password" id="password" class="form-control" required>
+
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox" id="showPassword" style="cursor: pointer;" onclick="togglePassword()">
+                    <label class="form-check-label" for="showPassword">
+                        Tampilkan Password
+                    </label>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">Login</button>
+            <button type="submit" class="btn w-100" style="background-color: black; color: white;">Login</button>
         </form>
 
         <p class="mt-3 text-center">
-            Belum punya akun? <a href="register.php">Register di sini</a>.
+            Belum punya akun? <a href="register.php" class="text-white text-decoration-underline">Register di sini</a>.
         </p>
     </div>
 
@@ -106,6 +120,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 alert.close();
             }, 3000);
         }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById("password");
+            passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+        }
     </script>
 </body>
 </html>
+

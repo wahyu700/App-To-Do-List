@@ -34,7 +34,7 @@ $result = $conn->query($sql);
     <style>
         body {
             font-family: 'Times New Roman', serif;
-            background-color: #f4f6f8;
+            background: linear-gradient(135deg,rgb(6, 32, 151), rgb(51, 127, 250));
         }
         .table th, .table td {
             vertical-align: middle;
@@ -43,12 +43,12 @@ $result = $conn->query($sql);
 </head>
 <body class="p-4">
     <div class="container">
-        <h3 class="mb-4">📊 Laporan Tugas Semua User</h3>
+        <h3 class="mb-4 text-white">📊 Laporan Tugas Semua User</h3>
 
         <!-- Form Filter -->
         <form method="get" class="mb-3 row g-2 align-items-center">
             <div class="col-auto">
-                <label for="status" class="form-label mb-0">Filter Status:</label>
+                <label for="status" class="form-label mb-0 text-white">Filter Status:</label>
             </div>
             <div class="col-auto">
                 <select name="status" id="status" class="form-select" onchange="this.form.submit()">
@@ -63,11 +63,11 @@ $result = $conn->query($sql);
         <table class="table table-bordered text-center table-striped">
             <thead class="table-primary">
                 <tr>
-                    <th>No</th>
-                    <th>Username</th>
-                    <th>Judul Tugas</th>
-                    <th>Status</th>
-                    <th>Dibuat Pada</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">No</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Username</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Judul Tugas</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Status</th>
+                    <th style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">Dibuat Pada</th>
                 </tr>
             </thead>
             <tbody>
@@ -96,5 +96,10 @@ $result = $conn->query($sql);
             </tbody>
         </table>
     </div>
+    <div class="container mt-5 pt-5">
+    <a href="dashboard_admin.php" class="btn btn-outline-light btn-lg mb-3 btn-press" style="bg-black">
+        <i class="bi bi-arrow-left-circle"></i> ⬅️
+    </a>
+</div>
 </body>
 </html>

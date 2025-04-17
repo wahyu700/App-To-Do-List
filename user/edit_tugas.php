@@ -32,9 +32,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $judul = trim($_POST['judul']);
 
     if ($judul !== '') {
-        $stmt = $conn->prepare("UPDATE tasks SET judul = ?, updated_at = NOW() WHERE id = ? AND user_id = ?");
-        $stmt->bind_param("sii", $judul, $id, $user_id);
-        $stmt->execute();
+   // Ganti query SELECT
+$stmt = $conn->prepare("
+SELECT t.* FROM tasks t 
+JOIN tasks_assignments ta ON t.id = ta.task_id 
+WHERE t.id = ? AND ta.user_id = ?");
+
 
         header("Location: tugas_saya.php");
         exit;
@@ -49,8 +52,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <title>Edit Tugas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, rgb(6, 32, 151), rgb(51, 127, 250));
+            min-height: 100vh; 
+            color: white;
+        }
+    </style>
 </head>
-<body class="container mt-5">
+<body class="gradient-bg container mt-5">
     <h3>Edit Tugas</h3>
 
     <?php if (isset($error)): ?>

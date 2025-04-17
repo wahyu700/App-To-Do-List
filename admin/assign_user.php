@@ -1,98 +1,88 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../login.php');
     exit;
 }
+
 include '../config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $task_id = $_POST['task_id'];
-    $assign_all = isset($_POST['assign_all']);
+    $task_id = (int)$_POST['task_id'];
+    $assign_all = isset($_POST['assign_all']) ? 1 : 0;
+    $user_ids = isset($_POST['user_ids']) ? $_POST['user_ids'] : [];
+
+    // Debug log
+    // var_dump($task_id, $assign_all, $user_ids); exit;
+
+    // Hapus assignment lama dulu
+    $deleteQuery = "DELETE FROM tasks_assignments WHERE task_id = ?";
+    $stmt = $conn->prepare($deleteQuery);
+    $stmt->bind_param("i", $task_id);
+    $stmt->execute();
+    $stmt->close();
 
     if ($assign_all) {
         // Assign ke semua user
-        $users = $conn->query("SELECT id FROM users WHERE role = 'user'");
-        while ($user = $users->fetch_assoc()) {
-            // Cek duplikat
-            $check = $conn->prepare("SELECT * FROM tasks WHERE judul = (SELECT judul FROM tasks WHERE id = ?) AND user_id = ?");
-            $check->bind_param("ii", $task_id, $user['id']);
-            $check->execute();
-            $result = $check->get_result();
-            if ($result->num_rows === 0) {
-                $conn->query("INSERT INTO tasks (judul, status, user_id) SELECT judul, status, {$user['id']} FROM tasks WHERE id = $task_id");
-            }
+        $usersResult = $conn->query("SELECT id FROM users WHERE role = 'user'");
+        $insertQuery = $conn->prepare("INSERT INTO tasks_assignments (task_id, user_id) VALUES (?, ?)");
+
+        while ($user = $usersResult->fetch_assoc()) {
+            $insertQuery->bind_param("ii", $task_id, $user['id']);
+            $insertQuery->execute();
         }
-        echo "<script>alert('Tugas berhasil di-assign ke semua user.'); window.location.href='semua_tugas.php';</script>";
+        $insertQuery->close();
+    } elseif (!empty($user_ids)) {
+        // Assign hanya ke user tertentu
+        $insertQuery = $conn->prepare("INSERT INTO tasks_assignments (task_id, user_id) VALUES (?, ?)");
+        // Debugging: Periksa data yang diterima
+echo "Task ID: $task_id<br>";
+echo "User IDs: " . implode(", ", $user_ids) . "<br>";
+
+        foreach ($user_ids as $user_id) {
+            $insertQuery->bind_param("ii", $task_id, $user_id);
+            $insertQuery->execute();
+        }
+        $insertQuery->close();
+    } else {
+        echo "Tidak ada user yang dipilih.";
         exit;
     }
 
-    $user_ids = $_POST['user_ids'] ?? [];
-
-    if (empty($user_ids)) {
-        echo "<script>alert('Pilih minimal satu user sebelum meng-assign tugas.'); window.history.back();</script>";
-        exit;
-    }
-
-    foreach ($user_ids as $user_id) {
-        $check = $conn->prepare("SELECT * FROM tasks WHERE id = ? AND user_id = ?");
-        $check->bind_param("ii", $task_id, $user_id);
-        $check->execute();
-        $result = $check->get_result();
-        if ($result->num_rows === 0) {
-            $conn->query("INSERT INTO tasks (judul, status, user_id) SELECT judul, status, {$user_id} FROM tasks WHERE id = $task_id");
-        }
-    }
-
-    echo "<script>alert('Tugas berhasil di-assign ke user yang dipilih.'); window.location.href='semua_tugas.php';</script>";
+    header("Location: semua_tugas.php");
     exit;
 }
 ?>
 
+
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Assign Tugas ke User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Tugas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Times New Roman', serif;
-            background-color: #f4f6f9;
-        }
-        .card {
-            max-width: 600px;
-            margin: 50px auto;
-        }
-    </style>
 </head>
+
 <body>
-    <div class="card shadow p-4">
-        <h4 class="mb-3">📌 Assign Tugas ke User</h4>
+    <div class="container mt-4">
+        <h3 class="mb-4">Assign Tugas</h3>
 
-        <form method="POST" id="assignForm">
+        <form method="POST" action="assign_user.php">
+            <input type="hidden" name="task_id" value="<?= isset($_GET['task_id']) ? $_GET['task_id'] : '' ?>">
+            <input type="hidden" name="assign_all" value="0">
+
             <div class="mb-3">
-                <label for="task_id" class="form-label">Pilih Tugas:</label>
-                <select name="task_id" class="form-control" required>
+                <label for="user_ids" class="form-label">Pilih User</label>
+                <select name="user_ids[]" class="form-control" id="user_ids" multiple size="5" required>
                     <?php
-                    $tasks = $conn->query("SELECT * FROM tasks WHERE user_id IS NULL");
-                    while ($task = $tasks->fetch_assoc()):
-                    ?>
-                        <option value="<?= $task['id'] ?>"><?= htmlspecialchars($task['judul']) ?></option>
-                    <?php endwhile; ?>
-                </select>
-            </div>
-
-            <div class="mb-3 form-check">
-                <input type="checkbox" name="assign_all" id="assign_all" class="form-check-input" onchange="toggleUserSelect(this)">
-                <label for="assign_all" class="form-check-label">Assign ke Semua User</label>
-            </div>
-
-            <div class="mb-3" id="user_select">
-                <label for="user_ids" class="form-label">Pilih User:</label>
-                <select name="user_ids[]" class="form-control" multiple>
-                    <?php
-                    $users = $conn->query("SELECT * FROM users WHERE role = 'user'");
+                    // Ambil semua user dengan role 'user'
+                    $users = $conn->query("SELECT id, username FROM users WHERE role = 'user'");
                     while ($user = $users->fetch_assoc()):
                     ?>
                         <option value="<?= $user['id'] ?>"><?= htmlspecialchars($user['username']) ?></option>
@@ -101,24 +91,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <small class="text-muted">Gunakan Ctrl / Cmd untuk memilih lebih dari satu user</small>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">Assign Sekarang</button>
+            <div class="form-check">
+                <input type="checkbox" name="assign_all" value="1" id="assign_all" class="form-check-input">
+                <label for="assign_all" class="form-check-label">Assign ke Semua User</label>
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success">Assign Tugas</button>
+                <a href="semua_tugas.php" class="btn btn-secondary">Batal</a>
+            </div>
         </form>
     </div>
 
-    <script>
-        function toggleUserSelect(checkbox) {
-            const userSelect = document.getElementById('user_select');
-            userSelect.style.display = checkbox.checked ? 'none' : 'block';
-        }
-
-        document.getElementById('assignForm').addEventListener('submit', function(e) {
-            const isAllChecked = document.getElementById('assign_all').checked;
-            const selectedUsers = document.querySelectorAll('select[name="user_ids[]"] option:checked');
-            if (!isAllChecked && selectedUsers.length === 0) {
-                alert("Pilih minimal satu user sebelum meng-assign tugas.");
-                e.preventDefault();
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -9,6 +9,37 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
 }
 
 $user_id = $_SESSION['user_id'];
+$message = '';
+
+// Proses edit tugas jika form disubmit
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_task_id'])) {
+    $task_id = intval($_POST['edit_task_id']);
+    $new_judul = trim($_POST['edit_judul']);
+
+    if ($new_judul !== '') {
+        // Pastikan tugas milik user
+        $checkStmt = $conn->prepare("
+            SELECT t.id FROM tasks t
+            JOIN tasks_assignments ta ON ta.task_id = t.id
+            WHERE t.id = ? AND ta.user_id = ?
+        ");
+        $checkStmt->bind_param("ii", $task_id, $user_id);
+        $checkStmt->execute();
+        $resultCheck = $checkStmt->get_result();
+
+        if ($resultCheck->num_rows > 0) {
+            // Update tugas
+            $updateStmt = $conn->prepare("UPDATE tasks SET judul = ?, updated_at = NOW() WHERE id = ?");
+            $updateStmt->bind_param("si", $new_judul, $task_id);
+            $updateStmt->execute();
+            $message = "Tugas berhasil diperbarui.";
+        } else {
+            $message = "Tugas tidak ditemukan atau bukan milik Anda.";
+        }
+    } else {
+        $message = "Judul tidak boleh kosong.";
+    }
+}
 
 // Ambil data tugas user dari tabel relasi tasks_assignments
 $query = "
@@ -43,6 +74,10 @@ $result = $stmt->get_result();
 <div class="container mt-4">
     <h3 class="mb-4 text-white">📋 Tugas Saya</h3>
 
+    <?php if ($message): ?>
+        <div class="alert alert-info"><?= $message ?></div>
+    <?php endif; ?>
+
     <?php if ($result->num_rows > 0): ?>
         <?php while ($row = $result->fetch_assoc()): ?>
             <div class="card mb-3">
@@ -54,7 +89,14 @@ $result = $stmt->get_result();
                     <?php if ($row['status'] !== 'selesai'): ?>
                         <a href="tandai_selesai.php?id=<?= $row['id'] ?>" class="btn btn-success btn-sm">✔️ Tandai Selesai</a>
                     <?php endif; ?>
-                    <a href="edit_tugas.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm">📝 Edit</a>
+                    <!-- Tombol untuk membuka modal edit -->
+                    <button 
+                        class="btn btn-primary btn-sm" 
+                        data-toggle="modal" 
+                        data-target="#editModal" 
+                        data-id="<?= $row['id'] ?>" 
+                        data-judul="<?= htmlspecialchars($row['judul']) ?>"
+                    >📝 Edit</button>
                     <a href="hapus_tugas.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus tugas ini?')">🗑️ Hapus</a>
                 </div>
             </div>
@@ -71,6 +113,45 @@ $result = $stmt->get_result();
         ⬅️ Kembali ke Dashboard
     </a>
 </div>
+
+<!-- Modal Edit Tugas -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="POST" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Tugas</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="edit_task_id" id="editTaskId">
+                <div class="form-group">
+                    <label for="editJudul">Judul Tugas</label>
+                    <input type="text" class="form-control" name="edit_judul" id="editJudul" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">💾 Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script untuk isi data ke modal -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $('#editModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget);
+        const taskId = button.data('id');
+        const judul = button.data('judul');
+
+        const modal = $(this);
+        modal.find('#editTaskId').val(taskId);
+        modal.find('#editJudul').val(judul);
+    });
+</script>
 
 </body>
 </html>

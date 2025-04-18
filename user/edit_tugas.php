@@ -32,19 +32,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $judul = trim($_POST['judul']);
 
     if ($judul !== '') {
-   // Ganti query SELECT
-$stmt = $conn->prepare("
-SELECT t.* FROM tasks t 
-JOIN tasks_assignments ta ON t.id = ta.task_id 
-WHERE t.id = ? AND ta.user_id = ?");
-
+        $stmt = $conn->prepare("
+            UPDATE tasks t 
+            JOIN tasks_assignments ta ON t.id = ta.task_id 
+            SET t.judul = ?, t.updated_at = NOW() 
+            WHERE t.id = ? AND ta.user_id = ?");
+        $stmt->bind_param("sii", $judul, $id, $user_id);
+        $stmt->execute();
+    
+        header("Location: tugas_saya.php");
+        exit;
+    }
+    
 
         header("Location: tugas_saya.php");
         exit;
     } else {
         $error = "Judul tidak boleh kosong.";
     }
-}
 ?>
 
 <!DOCTYPE html>

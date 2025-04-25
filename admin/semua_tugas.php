@@ -132,9 +132,7 @@ $result = $conn->query($query);
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header text-white" style="background: linear-gradient(135deg, #337FFA, #062097); color: white;">
-                                        <h5 class="modal-title w-100 text-center" id="editModalLabel<?= $row['id'] ?>">
-                                        >
-                                          Edit Tugas</h5>
+                                        <h5 class="modal-title w-100 text-center" id="editModalLabel<?= $row['id'] ?>">Edit Tugas</h5>
                                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>

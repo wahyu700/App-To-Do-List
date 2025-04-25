@@ -155,7 +155,7 @@ $result_belum = $conn->query("
 
 <div class="container mt-5 pt-5">
     <a href="dashboard_user.php" class="btn btn-outline-light btn-lg mb-3 btn-press">
-        ⬅️ Kembali ke Dashboard
+        ⬅️ 
     </a>
 </div>
 

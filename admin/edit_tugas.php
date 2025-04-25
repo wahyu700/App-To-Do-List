@@ -45,7 +45,6 @@ if (!$stmt->fetch()) {
 $stmt->close();
 ?>
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -66,7 +65,7 @@ $stmt->close();
     </style>
 </head>
 <body class="gradient-bg container mt-5">
- <!-- Tombol untuk membuka modal -->
+<!-- Tombol untuk membuka modal -->
 <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editTaskModal">
   ✏️ Edit Tugas
 </button>
@@ -75,12 +74,15 @@ $stmt->close();
 <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="POST" action="edit_tugas.php?id=<?= $id ?>">
+      <form method="POST" action="edit_tugas.php">
         <div class="modal-header bg-warning text-dark">
           <h5 class="modal-title" id="editTaskModalLabel">Edit Tugas</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
         </div>
         <div class="modal-body">
+          <!-- Tambahan hidden input untuk ID -->
+          <input type="hidden" name="id" value="<?= $id ?>">
+          
           <div class="mb-3">
             <label for="judul" class="form-label">Judul Tugas</label>
             <input type="text" name="judul" id="judul" value="<?= htmlspecialchars($judul) ?>" class="form-control" required>

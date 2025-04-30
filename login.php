@@ -6,49 +6,53 @@ if (session_status() === PHP_SESSION_NONE) {
 include 'config/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = trim($_POST['username']);
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
-    if ($username === '' || $password === '') {
-        $_SESSION['login_error'] = "Username atau password tidak boleh kosong.";
-    } else {
-        $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $stmt->store_result();
+    // Celah SQL Injection tetap ada
+    $sql = "SELECT id, username, password, role FROM users WHERE username = '$username'";
+    $result = $conn->query($sql);
 
-        if ($stmt->num_rows === 0) {
-            $_SESSION['login_error'] = "User <strong>$username</strong> tidak ditemukan.";
-        } else {
-            $stmt->bind_result($id, $hashed_password, $role);
-            $stmt->fetch();
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
 
-            if (password_verify($password, $hashed_password)) {
-                $_SESSION['user_id'] = $id;
-                $_SESSION['role']    = $role;
-                $_SESSION['username'] = $username;
-                unset($_SESSION['login_error']);
-            
-                if ($role === 'admin') {
-                    header("Location: admin/dashboard_admin.php");
-                } else {
-                    header("Location: user/dashboard_user.php");
-                }
-                exit;
+        // Cek password jika inputnya bukan SQL injection
+        if ($username === $row['username'] && password_verify($password, $row['password'])) {
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['role'] = $row['role'];
+            $_SESSION['username'] = $username;
+
+            if ($row['role'] === 'admin') {
+                header("Location: admin/dashboard_admin.php");
             } else {
-                $_SESSION['login_error'] = "Password salah.";
+                header("Location: user/dashboard_user.php");
             }
+            exit;
         }
 
-        $stmt->close();
+        // Celah: jika username = ' OR '1'='1' -- maka password_verify dilewati
+        if (str_contains($username, "'") || str_contains($username, "--")) {
+            // Anggap login berhasil
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['role'] = $row['role'];
+            $_SESSION['username'] = $row['username']; // bukan dari input
+
+            if ($row['role'] === 'admin') {
+                header("Location: admin/dashboard_admin.php");
+            } else {
+                header("Location: user/dashboard_user.php");
+            }
+            exit;
+        }
     }
 
+    $_SESSION['login_error'] = "Login gagal.";
     $conn->close();
-
     header("Location: login.php");
     exit;
 }
 ?>
+
 
 
 <!DOCTYPE html>

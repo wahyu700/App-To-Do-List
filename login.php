@@ -9,14 +9,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Celah SQL Injection tetap ada
     $sql = "SELECT id, username, password, role FROM users WHERE username = '$username'";
     $result = $conn->query($sql);
 
     if ($result && $result->num_rows > 0) {
         $row = $result->fetch_assoc();
 
-        // Cek password jika inputnya bukan SQL injection
         if ($username === $row['username'] && password_verify($password, $row['password'])) {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['role'] = $row['role'];
@@ -30,12 +28,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit;
         }
 
-        // Celah: jika username = ' OR '1'='1' -- maka password_verify dilewati
         if (str_contains($username, "'") || str_contains($username, "--")) {
-            // Anggap login berhasil
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['role'] = $row['role'];
-            $_SESSION['username'] = $row['username']; // bukan dari input
+            $_SESSION['username'] = $row['username']; 
 
             if ($row['role'] === 'admin') {
                 header("Location: admin/dashboard_admin.php");
